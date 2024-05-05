@@ -1,14 +1,17 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from "vue"
 
 export const useDashboardStore = defineStore('dashboard', () => {
-	const isLoading = ref(true)
-	const students = ref({})
+	let isLoading = ref(true)
+	let students = ref([])
 
 	const populateStudents = () => {
 		window.axios.get('/api/getStudents')
 			.then((res) => {
-				students = { ...res.data }
-				isLoading = false
+				students.value = [ ...res.data ]
+				isLoading.value = false
 			})
 	}
+
+	return { isLoading, students, populateStudents }
 })
