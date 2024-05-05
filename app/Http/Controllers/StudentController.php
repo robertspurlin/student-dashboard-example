@@ -14,10 +14,9 @@ class StudentController extends Controller
      * 
      * Returns all Students.
      *
-     * @param Request $request
      * @return Response
      */
-    public function getStudents(Request $request): Response
+    public function getStudents(): Response
     {
         return response(Student::all(), '200');
     }
