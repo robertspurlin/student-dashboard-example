@@ -36,7 +36,7 @@ class StudentController extends Controller
     }
 
     /**
-     * updateStudentGrade
+     * advanceStudent
      * 
      * Updates the grade given a valid Student. 
      * See StoreStudent for validation of request.
@@ -44,7 +44,7 @@ class StudentController extends Controller
      * @param StoreStudent $request
      * @return Response
      */
-    public function updateStudentGrade(StoreStudent $request): Response
+    public function advanceStudent(StoreStudent $request): Response
     {
         $student = Student::findOrFail($request->id);
         $student->grade = $request->grade;
