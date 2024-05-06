@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import titleCase from '../../../../helpers/titleCase'
 import DataTableActions from './DataTableActions.vue'
+import StudentForm from '../../reusuable/StudentForm.vue'
 import { useDashboardStore } from '../../../stores/dashboardStore'
 
 const store = useDashboardStore()
@@ -11,7 +12,16 @@ onMounted(() => {
 })
 
 const searchValue = defineModel('searchValue')
-const selectedRows = defineModel('selectedRows')
+const snackbarNeedsToShow = defineModel('snackbarNeedsToShow')
+const snackbarMessage = ref('')
+const snackbarColor = ref('')
+
+const editDialogNeedsToShow = ref(false)
+const selectedStudentFirstName = ref('')
+const selectedStudentLastName = ref('')
+const selectedStudentGrade = ref('')
+const selectedStudentClasses = ref('')
+const selectedStudentId = ref('')
 
 const dataTableHeaders = computed({
 	get() {
@@ -33,43 +43,97 @@ const dataTableHeaders = computed({
 		return returnArr
 	}
 })
+
+const showSnackbar = (message, color) => {
+	snackbarNeedsToShow.value = true
+	snackbarMessage.value = message
+	snackbarColor.value = color
+}
+
+const showEditDialog = (studentId) => {
+	const student = store.findStudent(studentId)
+	console.log(student)
+	selectedStudentFirstName.value = student.first_name
+	selectedStudentLastName.value = student.last_name
+	selectedStudentGrade.value = student.grade
+	selectedStudentClasses.value = student.classes
+	selectedStudentId.value = student.id
+	editDialogNeedsToShow.value = true
+}
+
+const formSubmitted = () => {
+	editDialogNeedsToShow.value = false
+	showSnackbar('Student saved.', 'green')
+}
 </script>
 
 <template>
-	<v-card flat class='my-3'>
-		<v-container fluid>
-			<v-row class='mx-0 d-flex justify-sm-space-between'>
-				<v-col xs='12' sm='4' class='my-auto'>
-					<v-btn color='primary'>
-						Create New Student
-					</v-btn>
-				</v-col>
-				<v-col xs='12' sm='4'>
-					<v-text-field
-						v-model="searchValue"
-						label="Search"
-						prepend-inner-icon="mdi-magnify"
-						variant="outlined"
-						hide-details
-						single-line
-					></v-text-field>
-				</v-col>
-			</v-row>
-		</v-container>
+	<div>
+		<v-card flat class='my-3'>
+			<v-container fluid>
+				<v-row class='mx-0 d-flex justify-sm-space-between'>
+					<v-col xs='12' sm='4' class='my-auto'>
+						<v-btn color='primary'>
+							Create New Student
+						</v-btn>
+					</v-col>
+					<v-col xs='12' sm='4'>
+						<v-text-field
+							v-model="searchValue"
+							label="Search"
+							prepend-inner-icon="mdi-magnify"
+							variant="outlined"
+							hide-details
+							single-line
+						></v-text-field>
+					</v-col>
+				</v-row>
+			</v-container>
 
-		<v-data-table
-			v-model="selectedRows"
-			:loading="store.isLoading"
-			:headers="dataTableHeaders"
-			:search="searchValue"
-			:items="store.students"
-			item-value="id"
-			return-object
-			show-select
+			<v-data-table
+				:loading="store.isLoading"
+				:headers="dataTableHeaders"
+				:search="searchValue"
+				:items="store.students"
+			>
+				<template v-slot:item.actions="{ item }">
+					<DataTableActions 
+						:studentId="item.id" 
+						@showSnackbar="showSnackbar"
+						@showEditDialog="showEditDialog"
+					/>
+				</template>
+			</v-data-table>
+		</v-card>
+
+		<v-snackbar
+			v-model='snackbarNeedsToShow'
+			:color='snackbarColor'
 		>
-			<template v-slot:item.actions="{ item }">
-				<DataTableActions :studentId="item.id" />
-			</template>
-		</v-data-table>
-	</v-card>
+			{{ snackbarMessage }}
+		</v-snackbar>
+
+		<v-dialog
+		v-model="editDialogNeedsToShow"
+		max-width="1000"
+		>
+			<v-card
+				prepend-icon="mdi-account"
+				title="Edit Student"
+			>
+				<v-card-text>
+					<StudentForm
+						:firstName='selectedStudentFirstName'
+						:lastName='selectedStudentLastName'
+						:grade='selectedStudentGrade'
+						:classes='selectedStudentClasses'
+						:id='selectedStudentId'
+						:readOnly='false'
+						@showSnackbar="showSnackbar"
+						@formSubmitted="formSubmitted"
+					/>
+				</v-card-text>
+			</v-card>
+		</v-dialog>
+	</div>
 </template>

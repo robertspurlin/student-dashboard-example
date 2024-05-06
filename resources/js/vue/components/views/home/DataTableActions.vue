@@ -6,17 +6,27 @@ const props = defineProps({
 	studentId: Number
 })
 
+const emit = defineEmits(['showSnackbar', 'showEditDialog'])
+
 const advanceStudent = () => {
 	try {
 		store.advanceStudent(props.studentId)
+		emit('showSnackbar', 'Student advanced.', 'green')
 	} catch (e) {
-		// show error
-		console.log(e)
+		emit('showSnackbar', e.message, 'red')
 	}
 }
 
-const editStudent = () => console.log(props.studentId)
-const deleteStudent = () => console.log(props.studentId)
+const editStudent = () => emit('showEditDialog', props.studentId)
+
+const deleteStudent = () => {
+	try {
+		store.deleteStudent(props.studentId)
+		emit('showSnackbar', 'Student deleted.', 'green')
+	} catch (e) {
+		emit('showSnackbar', e.message, 'red')
+	}
+}
 </script>
 
 <template>
@@ -54,7 +64,7 @@ const deleteStudent = () => console.log(props.studentId)
 				<v-icon 
 					class="me-4" 
 					size="small" 
-					@click="advanceStudent()"
+					@click="deleteStudent()"
 					v-bind="props"
 				>
 					mdi-delete
