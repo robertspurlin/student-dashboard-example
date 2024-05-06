@@ -54,4 +54,4 @@ npm run test
 <hr />
 
 I thank you for your time and consideration, and I look forward to meeting with you all! If there are any questions and/or concerns, please feel free to reach out. 
-- Robert Spurlin
+Robert Spurlin
