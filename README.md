@@ -1,66 +1,57 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Student Dashboard
+A Laravel instance driving a front-end built in Vue 3 using Pinia, Vuetify for styling, and Vitest for testing. 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Quick Start
+This was built using Laravel Sail, a set of Docker containers that come with all server dependencies installed for you. However, you will still need to build all of the app dependencies. 
 
-## About Laravel
+Within the directory that you've cloned the repository in, spin up a helper Docker container that will install all of our Composer dependencies (including Laravel Sail), and then remove itself. The command to do such a thing (using PHP 8.3) is below:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```
+docker run --rm \
+    -v "$(pwd)":/var/www/html \
+    -w /var/www/html \
+    laravelsail/php83-composer:latest \
+    bash -c "composer install --ignore-platform-reqs"
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+After the helper Docker container is complete installing everything, starting both containers for the application should be as easy as running this command in the directory:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+./vendor/bin/sail up -d
+```
 
-## Learning Laravel
+When the containers are running, we need to run the NPM and database seeding commands in the `laravel.test` container. Within the container -
+```
+npm install
+npm run build
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+To create the database table and seed it with fake data, run these commands (also in the same container) -
+```
+php artisan migrate:fresh
+php artisan db:seed
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Finally, navigate to `localhost` in a browser. 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Testing
+Within the `laravel.test` container - 
 
-## Laravel Sponsors
+```
+npm run test
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+(A note here - I wrote tests for every action within the Pinia store, but wasn't able to get all of them to pass without a refactor on how the ajax calls are working. I decided to comment them out in the interest of sending the project in a timely manner - I left all of the tests in place for reading pleasure.)
 
-### Premium Partners
+## Notes
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- This is an SPA running vue-router. There are only three routes - root (/), Create New Student (/create), and a catch all for all routes that don't match.
+- I wrote the form component to be reusuable between both the main page's edit functionality and the create student page.
+- Within the form component, there is proper validation on all fields.
+- There is also error and success handling on all actions - if the action fails, there is a red snackbar notification at the bottom of the page, and if it succeeds, there is a green snackbar notification.
+- I committed the .env file for ease of building. 
 
-## Contributing
+<hr />
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+I thank you for your time and consideration, and I look forward to meeting with you all! If there are any questions and/or concerns, please feel free to reach out. 
+- Robert Spurlin
