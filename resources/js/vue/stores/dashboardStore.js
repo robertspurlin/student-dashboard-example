@@ -54,7 +54,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	}
 
 	const saveNewStudent = (student) => {
-		window.axios.post('/api/saveEditedStudent', {student: student})
+		window.axios.post('/api/createNewStudent', {student: student})
 		.catch((error) => {
 			throw new Error("Something went wrong.")
 		})

@@ -50,13 +50,22 @@ const classesRules = ref([
 	}
 ])
 
+const gradeRules = ref([
+	value => {
+		if (value) return true
+		return 'Grade cannot be empty.'
+	}
+])
+
 const isSubmitting = ref(false)
+const submitError = ref(false)
 
 const saveStudent = async (submitEventPromise) => {
 	const { valid, errors } = await submitEventPromise
 	if (!valid) return
 
 	isSubmitting.value = true
+	submitError.value = false
 
 	try {
 		submitFunction.value({
@@ -69,10 +78,13 @@ const saveStudent = async (submitEventPromise) => {
 		console.log('ran')
 	} catch (e) {
 		emit('showSnackbar', e.message, 'red')
+		submitError.value = true
 	}
 
 	isSubmitting.value = false
-	emit('formSubmitted')
+	if (submitError.value === false) {
+		emit('formSubmitted')
+	}
 }
 </script>
 
@@ -116,6 +128,7 @@ const saveStudent = async (submitEventPromise) => {
 					:items="['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']"
 					label="Grade"
 					v-model="formGrade"
+					:rules="gradeRules"
 					:readonly="isSubmitting"
 					required
 				></v-select>

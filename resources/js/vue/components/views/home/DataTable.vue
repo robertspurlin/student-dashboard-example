@@ -73,7 +73,7 @@ const formSubmitted = () => {
 			<v-container fluid>
 				<v-row class='mx-0 d-flex justify-sm-space-between'>
 					<v-col xs='12' sm='4' class='my-auto'>
-						<v-btn color='primary'>
+						<v-btn color='primary' to='/create'>
 							Create New Student
 						</v-btn>
 					</v-col>

@@ -23,10 +23,10 @@ class SaveNewStudentRequest extends FormRequest
     {
         return [
             'student' => 'required|array',
-            'student.*.first_name' => 'required|string',
-            'student.*.last_name' => 'required|string',
-            'student.*.grade' => 'required|numeric|between:1,12',
-            'student.*.classes' => 'required|string'
+            'student.first_name' => 'required|string',
+            'student.last_name' => 'required|string',
+            'student.grade' => 'required|numeric|between:1,12',
+            'student.classes' => 'required|string'
         ];
     }
 }
